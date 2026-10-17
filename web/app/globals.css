@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-paper text-ink font-sans antialiased;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+body.signing {
+  overflow: hidden;
+  touch-action: none;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+@media print {
+  body {
+    background: white !important;
+    padding: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

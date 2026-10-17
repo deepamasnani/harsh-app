@@ -1,0 +1,15 @@
+services:
+  minio:
+    image: quay.io/minio/aistor/minio:latest
+    container_name: harsh-aistor
+    command: server /mnt/data --console-address ":9001" --license /minio.license
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: harshminio
+      MINIO_ROOT_PASSWORD: harshminio123
+    volumes:
+      - ./minio/data:/mnt/data
+      - ./minio/minio.license:/minio.license:ro
+    restart: unless-stopped

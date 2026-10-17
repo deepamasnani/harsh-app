@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           Int    @id @default(autoincrement())
+  username     String @unique
+  passwordHash String
+  role         String
+  fullName     String
+}
+
+model Product {
+  id         Int           @id @default(autoincrement())
+  sku        String        @unique
+  name       String
+  unit       String        @default("pcs")
+  price      Float         @default(0)
+  stock      Float         @default(0)
+  category   String        @default("General")
+  isActive   Boolean       @default(true)
+  invoiceItems InvoiceItem[]
+}
+
+model Customer {
+  id       Int       @id @default(autoincrement())
+  name     String
+  nameKey  String    @unique
+  phone    String    @default("")
+  shop     String    @default("")
+  invoices Invoice[]
+}
+
+model Invoice {
+  id              Int           @id @default(autoincrement())
+  number          String        @unique
+  customerId      Int?
+  customer        Customer?     @relation(fields: [customerId], references: [id])
+  customerName    String
+  customerPhone   String        @default("")
+  customerShop    String        @default("")
+  notes           String        @default("")
+  status          String        @default("pending")
+  subtotal        Float         @default(0)
+  total           Float         @default(0)
+  amountPaid      Float         @default(0)
+  signaturePath   String?
+  signatureFileId String?
+  pdfFileId       String?
+  createdAt       DateTime      @default(now())
+  deliveredAt     DateTime?
+  settledAt       DateTime?
+  items           InvoiceItem[]
+  payments        Payment[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model InvoiceItem {
+  id        Int      @id @default(autoincrement())
+  invoiceId Int
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id])
+  sku       String
+  name      String
+  unit      String
+  quantity  Float
+  unitPrice Float
+  lineTotal Float
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  invoiceId Int
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount    Float
+  kind      String
+  note      String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model GoogleDriveConnection {
+  id                  Int      @id @default(1)
+  refreshTokenEnc     String
+  accessTokenEnc      String   @default("")
+  expiresAt           DateTime
+  rootFolderId        String   @default("")
+  signaturesFolderId  String   @default("")
+  invoicesFolderId    String   @default("")
+  connectedEmail      String?
+  updatedAt           DateTime @updatedAt
+}
