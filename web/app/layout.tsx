@@ -4,8 +4,18 @@ import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import RegisterSW from "@/components/RegisterSW";
 
-const display = DM_Serif_Display({ subsets: ["latin"], weight: "400", variable: "--font-display" });
-const sans = Schibsted_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
+const display = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-display",
+  display: "swap",
+});
+const sans = Schibsted_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Harsh Hardware",

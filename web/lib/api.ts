@@ -16,9 +16,12 @@ export async function api<T = any>(path: string, options: ApiOptions = {}): Prom
     data = { detail: text };
   }
   if (res.status === 401) {
-    if (!path.includes("/auth/login") && typeof window !== "undefined") window.location.href = "/login";
-    const detail = data?.detail;
-    throw new Error(detail || "Please sign in again");
+    const onLogin = typeof window !== "undefined" && window.location.pathname.startsWith("/login");
+    const sessionCheck = path.includes("/auth/me") || path.includes("/auth/login");
+    if (typeof window !== "undefined" && !sessionCheck && !onLogin) {
+      window.location.assign("/login");
+    }
+    throw new Error(data?.detail || "Please sign in again");
   }
   if (!res.ok) {
     const detail = data?.detail;
