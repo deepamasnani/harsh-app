@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import FolderCard from "@/components/FolderCard";
 import { groupFolders } from "@/lib/utils";
@@ -40,7 +41,12 @@ export default function Invoices() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight mb-1">Invoices</h1>
+      <div className="flex items-end justify-between gap-3 mb-1">
+        <h1 className="text-2xl font-semibold tracking-tight">Invoices</h1>
+        <Link href="/customers" className="text-sm text-brass-700 font-medium pb-0.5">
+          Saved names
+        </Link>
+      </div>
       <p className="text-slate-500 text-sm mb-4">One folder per customer.</p>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-3">

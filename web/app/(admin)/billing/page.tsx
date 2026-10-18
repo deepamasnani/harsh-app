@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp, Minus, Plus, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
@@ -15,9 +16,66 @@ export default function Billing() {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [customer, setCustomer] = useState({ customer_name: "", customer_phone: "", customer_shop: "", notes: "" });
+  const [nameMatches, setNameMatches] = useState([]);
+  const [openNames, setOpenNames] = useState(false);
+  const [picked, setPicked] = useState(null);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [searching, setSearching] = useState(false);
+
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const name = p.get("name");
+    if (!name) return;
+    setCustomer({
+      customer_name: name,
+      customer_phone: p.get("phone") || "",
+      customer_shop: p.get("shop") || "",
+      notes: "",
+    });
+    setPicked({ name, phone: p.get("phone") || "", shop: p.get("shop") || "" });
+  }, []);
+
+  useEffect(() => {
+    if (!openNames) return;
+    const s = customer.customer_name.trim();
+    const t = setTimeout(() => {
+      api(`/api/customers?q=${encodeURIComponent(s)}&limit=8`)
+        .then(setNameMatches)
+        .catch(() => undefined);
+    }, 120);
+    return () => clearTimeout(t);
+  }, [customer.customer_name, openNames]);
+
+  const nameQ = customer.customer_name.trim().toLowerCase();
+  const exactName = nameMatches.find((c) => c.name.toLowerCase() === nameQ);
+  const canAddName = Boolean(nameQ && !exactName && !picked);
+
+  function pickExisting(c) {
+    setPicked(c);
+    setCustomer({
+      customer_name: c.name,
+      customer_phone: c.phone || "",
+      customer_shop: c.shop || "",
+      notes: "",
+    });
+    setOpenNames(false);
+    setNameMatches([]);
+  }
+
+  function addNewName() {
+    const name = customer.customer_name.trim();
+    setPicked(null);
+    setCustomer((prev) => ({ ...prev, customer_name: name }));
+    setOpenNames(false);
+  }
+
+  function onNameChange(value) {
+    setCustomer((prev) => ({ ...prev, customer_name: value }));
+    setPicked(null);
+    setOpenNames(true);
+    setCartOpen(false);
+  }
 
   useEffect(() => {
     const s = q.trim();
@@ -102,17 +160,61 @@ export default function Billing() {
 
   return (
     <div className="pb-36">
-      <h1 className="text-2xl font-semibold tracking-tight mb-3">New bill</h1>
+      <div className="flex items-end justify-between gap-3 mb-3">
+        <h1 className="text-2xl font-semibold tracking-tight">New bill</h1>
+        <Link href="/customers" className="text-sm text-brass-700 font-medium pb-0.5">
+          Saved names
+        </Link>
+      </div>
 
       <label className="text-xs font-medium text-slate-500">Customer</label>
-      <input
-        value={customer.customer_name}
-        onChange={(e) => setCustomer((c) => ({ ...c, customer_name: e.target.value }))}
-        placeholder="Shop or person name"
-        className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 outline-none focus:border-brass-500"
-        autoComplete="off"
-        enterKeyHint="next"
-      />
+      <div className="relative mt-1 mb-2">
+        <input
+          value={customer.customer_name}
+          onChange={(e) => onNameChange(e.target.value)}
+          onFocus={() => {
+            setOpenNames(true);
+            setCartOpen(false);
+          }}
+          onBlur={() => setTimeout(() => setOpenNames(false), 180)}
+          placeholder="Type a saved name or a new one"
+          className="w-full rounded-2xl border-2 border-ink bg-white px-3 py-3 outline-none"
+          autoComplete="off"
+          enterKeyHint="next"
+        />
+        {openNames && (
+          <div className="absolute z-30 left-0 right-0 mt-1 rounded-2xl border border-slate-200 bg-white shadow-sheet overflow-hidden max-h-64 overflow-y-auto">
+            {nameMatches.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => pickExisting(c)}
+                className="w-full text-left px-4 py-3 border-b border-slate-100 active:bg-slate-50"
+              >
+                <p className="font-medium">{c.name}</p>
+                <p className="text-xs text-slate-500">
+                  {c.phone || "No phone"}
+                  {c.shop && c.shop !== c.name ? ` · ${c.shop}` : ""}
+                </p>
+              </button>
+            ))}
+            {canAddName && (
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={addNewName}
+                className="w-full text-left px-4 py-3 bg-ink text-white font-medium"
+              >
+                Add “{customer.customer_name.trim()}”
+              </button>
+            )}
+            {!nameMatches.length && !canAddName && (
+              <p className="px-4 py-3 text-sm text-slate-500">Saved names appear as you type.</p>
+            )}
+          </div>
+        )}
+      </div>
       <div className="grid grid-cols-2 gap-2 mt-2 mb-4">
         <input
           value={customer.customer_phone}

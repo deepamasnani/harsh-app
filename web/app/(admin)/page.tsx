@@ -38,6 +38,9 @@ export default function Dashboard() {
       <Link href="/billing" className="mt-6 flex items-center justify-center rounded-2xl bg-brass-600 text-white py-3.5 font-semibold">
         New bill
       </Link>
+      <Link href="/customers" className="mt-3 flex items-center justify-center rounded-2xl border border-slate-200 bg-white py-3 text-sm font-medium">
+        Saved customers
+      </Link>
     </div>
   );
 }
