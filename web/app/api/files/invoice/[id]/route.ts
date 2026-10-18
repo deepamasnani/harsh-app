@@ -14,21 +14,16 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
   const inv = await prisma.invoice.findUnique({ where: { id: Number(id) }, include: invoiceInclude });
   if (!inv) return jsonError("Invoice not found", 404);
-  if (inv.pdfFileId) {
+  let sig: Buffer | null = null;
+  if (inv.signatureFileId) {
     try {
-      const data = await downloadDriveFile(inv.pdfFileId);
-      return new NextResponse(new Uint8Array(data), {
-        headers: {
-          "Content-Type": "application/pdf",
-          "Content-Disposition": `inline; filename="${inv.number}.pdf"`,
-        },
-      });
+      sig = await downloadDriveFile(inv.signatureFileId);
     } catch {
-      /* rebuild below */
+      sig = null;
     }
   }
-  const pdf = await buildInvoicePdf(inv);
-  archiveInvoice(inv.id).catch(() => undefined);
+  const pdf = await buildInvoicePdf(inv, sig);
+  archiveInvoice(inv.id, sig).catch(() => undefined);
   return new NextResponse(new Uint8Array(pdf), {
     headers: {
       "Content-Type": "application/pdf",
