@@ -11,19 +11,40 @@ type User = {
 };
 
 const AuthCtx = createContext<any>(null);
+const CACHE_KEY = "hh_user";
+
+function readCachedUser(): User | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY);
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedUser(user: User | null) {
+  if (typeof window === "undefined") return;
+  if (user) sessionStorage.setItem(CACHE_KEY, JSON.stringify(user));
+  else sessionStorage.removeItem(CACHE_KEY);
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [ready, setReady] = useState(false);
+  const [user, setUser] = useState<User | null>(readCachedUser);
+  const [ready, setReady] = useState(() => readCachedUser() !== null);
 
   useEffect(() => {
     let cancelled = false;
     api("/api/auth/me")
       .then((u) => {
-        if (!cancelled) setUser(u);
+        if (cancelled) return;
+        setUser(u);
+        writeCachedUser(u);
       })
       .catch(() => {
-        if (!cancelled) setUser(null);
+        if (cancelled) return;
+        setUser(null);
+        writeCachedUser(null);
       })
       .finally(() => {
         if (!cancelled) setReady(true);
@@ -40,6 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async login(username: string, password: string) {
         const data: any = await api("/api/auth/login", { method: "POST", body: { username, password } });
         setUser(data.user);
+        writeCachedUser(data.user);
         return data.user;
       },
       async logout() {
@@ -49,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           /* ignore */
         }
         setUser(null);
+        writeCachedUser(null);
       },
     }),
     [user, ready]

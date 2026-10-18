@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["googleapis", "better-sqlite3", "xlsx"],
+  serverExternalPackages: ["googleapis", "better-sqlite3", "xlsx", "ws", "@neondatabase/serverless", "@prisma/adapter-neon"],
   async headers() {
     return [
       {

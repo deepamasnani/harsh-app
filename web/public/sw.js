@@ -1,4 +1,4 @@
-const CACHE = "harsh-hw-v3";
+const CACHE = "harsh-hw-v4";
 const STATIC = ["/icon-192.png", "/icon-512.png", "/apple-touch-icon.png"];
 
 self.addEventListener("install", (event) => {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 
+export const preferredRegion = ["sin1"];
+
 function out(p: {
   id: number;
   sku: string;

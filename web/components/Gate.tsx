@@ -15,7 +15,7 @@ export default function Gate({ role, children }: { role?: string; children: Reac
   }, [ready, user, role, router]);
 
   if (!ready || !user || (role && user.role !== role)) {
-    return <div className="min-h-screen grid place-items-center text-stone-500">Opening ledger…</div>;
+    return <div className="min-h-screen grid place-items-center text-slate-400 text-sm">Loading…</div>;
   }
   return <>{children}</>;
 }

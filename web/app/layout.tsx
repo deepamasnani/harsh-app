@@ -19,6 +19,9 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+export const preferredRegion = ["sin1"];
+export const runtime = "nodejs";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

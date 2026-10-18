@@ -7,6 +7,7 @@ import { money, todayBoundsUtc } from "@/lib/money";
 import { archiveInvoice } from "@/lib/archive";
 
 export const maxDuration = 60;
+export const preferredRegion = ["sin1"];
 
 export async function GET(req: NextRequest) {
   const { user, error } = await requireUser();
@@ -31,10 +32,14 @@ export async function GET(req: NextRequest) {
   }
   const rows = await prisma.invoice.findMany({
     where,
-    include: invoiceInclude,
+    include: {
+      items: { select: { id: true } },
+      payments: { orderBy: { createdAt: "asc" } },
+    },
     orderBy: { createdAt: "desc" },
+    take: status === "credit" ? 200 : 80,
   });
-  return NextResponse.json(rows.map((inv) => invoiceOut(inv, false)));
+  return NextResponse.json(rows.map((inv) => invoiceOut(inv as any, false)));
 }
 
 export async function POST(req: Request) {
@@ -57,10 +62,14 @@ export async function POST(req: Request) {
   }[] = [];
   let subtotal = 0;
   const stockMoves: { id: number; qty: number; price: number }[] = [];
+  const catalog = await prisma.product.findMany({
+    where: { id: { in: items.map((row: { product_id: number }) => Number(row.product_id)) } },
+  });
+  const byId = new Map(catalog.map((p) => [p.id, p]));
   for (const row of items) {
     const quantity = Number(row.quantity);
     if (quantity <= 0) return jsonError("Quantity must be more than 0");
-    const product = await prisma.product.findUnique({ where: { id: Number(row.product_id) } });
+    const product = byId.get(Number(row.product_id));
     if (!product || !product.isActive) return jsonError(`Unknown product id ${row.product_id}`);
     const rawPrice = row.unit_price ?? row.price;
     const unitPrice = rawPrice === undefined || rawPrice === null || rawPrice === "" ? product.price : Number(rawPrice);

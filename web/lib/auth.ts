@@ -18,8 +18,8 @@ export type AuthUser = {
   shop: ReturnType<typeof shop>;
 };
 
-export async function createToken(user: { id: number; role: string }) {
-  return new SignJWT({ role: user.role })
+export async function createToken(user: { id: number; role: string; username: string; fullName: string }) {
+  return new SignJWT({ role: user.role, username: user.username, fullName: user.fullName })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(String(user.id))
     .setExpirationTime("7d")
@@ -46,7 +46,15 @@ export async function getSessionUser(): Promise<AuthUser | null> {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, secret());
-    const user = await prisma.user.findUnique({ where: { id: Number(payload.sub) } });
+    const id = Number(payload.sub);
+    if (!id) return null;
+    const role = String(payload.role || "");
+    const username = String(payload.username || "");
+    const fullName = String(payload.fullName || "");
+    if (username && role) {
+      return { id, username, role, full_name: fullName, shop: shop() };
+    }
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) return null;
     return {
       id: user.id,

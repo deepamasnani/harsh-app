@@ -2,15 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { customerKey, money } from "@/lib/money";
-import { invoiceInclude } from "@/lib/invoices";
+export const preferredRegion = ["sin1"];
 
 export async function GET() {
   const { error } = await requireAdmin();
   if (error) return error;
   const rows = await prisma.invoice.findMany({
     where: { status: "credit" },
-    include: invoiceInclude,
     orderBy: { deliveredAt: "desc" },
+    take: 200,
   });
   const grouped: Record<string, {
     key: string;
