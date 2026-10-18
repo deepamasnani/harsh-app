@@ -76,7 +76,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </button>
           </div>
         </header>
-        <main className="max-w-6xl mx-auto px-4 py-4 lg:px-8 lg:py-8">{children}</main>
+        <main className="max-w-6xl mx-auto px-4 pt-5 pb-4 lg:px-8 lg:py-8">{children}</main>
       </div>
 
       <nav className="tabbar no-print lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-slate-200">

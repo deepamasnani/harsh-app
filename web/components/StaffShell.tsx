@@ -26,7 +26,7 @@ export default function StaffShell({ children }: { children: React.ReactNode }) 
           <LogOut size={18} />
         </button>
       </header>
-      <main className="max-w-lg mx-auto px-4 py-4 pb-8">{children}</main>
+      <main className="max-w-lg mx-auto px-4 pt-5 pb-8">{children}</main>
     </div>
   );
 }

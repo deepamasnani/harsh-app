@@ -31,7 +31,8 @@ export default function InvoicePrint() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <div className="no-print max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="app-header no-print sticky top-0 z-20 border-b border-slate-200 bg-white">
+        <div className="max-w-2xl mx-auto px-4 pb-3 flex items-center justify-between">
         <Link href={back} className="text-sm underline">
           Back
         </Link>
@@ -61,9 +62,10 @@ export default function InvoicePrint() {
             {saving ? "Preparing…" : "Save / Print"}
           </button>
         </div>
+        </div>
       </div>
 
-      <article className="print-sheet max-w-2xl mx-auto bg-white shadow-sheet mx-4 mb-10 p-6 sm:p-10 text-ink">
+      <article className="print-sheet max-w-2xl mx-auto bg-white shadow-sheet mx-4 mt-4 mb-10 p-6 sm:p-10 text-ink">
         <header className="flex justify-between gap-4 border-b-2 border-ink pb-4">
           <div>
             <p className="font-display text-3xl">{shop.name}</p>
