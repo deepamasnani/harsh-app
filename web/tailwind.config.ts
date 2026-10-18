@@ -5,22 +5,22 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ["var(--font-display)", "Georgia", "serif"],
-        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["ui-rounded", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        sans: ["ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
       },
       colors: {
         brass: {
-          50: "#fbf6ea",
-          400: "#d4a017",
-          500: "#c4920a",
-          600: "#a67c08",
-          700: "#8a6707",
+          50: "#f0fdfa",
+          400: "#2dd4bf",
+          500: "#0d9488",
+          600: "#0f766e",
+          700: "#115e59",
         },
-        paper: "#f4efe6",
-        ink: "#1c1612",
+        paper: "#f3f4f6",
+        ink: "#0f172a",
       },
       boxShadow: {
-        sheet: "0 1px 0 rgba(28,22,18,0.06), 0 12px 32px rgba(28,22,18,0.08)",
+        sheet: "0 1px 0 rgba(15,23,42,0.04), 0 10px 28px rgba(15,23,42,0.08)",
       },
     },
   },

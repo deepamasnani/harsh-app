@@ -31,47 +31,32 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-dvh min-h-dvh overflow-hidden grid lg:grid-cols-2">
-      <div className="hidden lg:flex bg-ink text-white flex-col justify-between p-12">
-        <div>
-          <p className="text-[11px] tracking-[0.28em] uppercase text-brass-400">Since the counter opened</p>
-          <h1 className="font-display text-6xl mt-4 leading-none">
-            Harsh
-            <br />
-            Hardware
-          </h1>
-        </div>
-        <p className="text-stone-400 max-w-sm text-lg leading-relaxed">
-          Stock on the shelf. A bill on the call. A signature on the doorstep.
-        </p>
-      </div>
-      <div className="flex items-center justify-center p-6 overflow-y-auto">
-        <form onSubmit={submit} className="w-full max-w-sm shrink-0">
-          <p className="lg:hidden font-display text-4xl mb-1">Harsh Hardware</p>
-          <h2 className="text-xl font-semibold mb-6">Sign in</h2>
-          <label className="block text-sm text-stone-600 mb-1">Username</label>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full rounded-xl border border-stone-300 bg-white px-3 py-3 mb-4 outline-none focus:border-ink"
-            autoComplete="username"
-            name="username"
-          />
-          <label className="block text-sm text-stone-600 mb-1">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-xl border border-stone-300 bg-white px-3 py-3 mb-4 outline-none focus:border-ink"
-            autoComplete="current-password"
-            name="password"
-          />
-          {err && <p className="text-sm text-red-700 mb-3">{err}</p>}
-          <button disabled={busy} className="w-full rounded-xl bg-ink text-white py-3 font-semibold disabled:opacity-60">
-            {busy ? "Checking…" : "Enter"}
-          </button>
-        </form>
-      </div>
+    <div className="min-h-dvh flex items-center justify-center p-6 bg-paper">
+      <form onSubmit={submit} className="w-full max-w-sm">
+        <p className="text-[11px] tracking-[0.22em] uppercase text-brass-600">Harsh Hardware</p>
+        <h1 className="text-3xl font-semibold tracking-tight mt-2 mb-6">Sign in</h1>
+        <label className="block text-sm text-slate-600 mb-1">Username</label>
+        <input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 mb-4 outline-none focus:border-brass-500"
+          autoComplete="username"
+          name="username"
+        />
+        <label className="block text-sm text-slate-600 mb-1">Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-3 mb-4 outline-none focus:border-brass-500"
+          autoComplete="current-password"
+          name="password"
+        />
+        {err && <p className="text-sm text-red-700 mb-3">{err}</p>}
+        <button disabled={busy} className="w-full rounded-2xl bg-brass-600 text-white py-3.5 font-semibold disabled:opacity-60">
+          {busy ? "Checking…" : "Enter"}
+        </button>
+      </form>
     </div>
   );
 }

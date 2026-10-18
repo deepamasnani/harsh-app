@@ -4,6 +4,7 @@
 
 :root {
   color-scheme: light;
+  --kb: 0px;
 }
 
 html,
@@ -14,8 +15,7 @@ body {
 
 body {
   @apply bg-paper text-ink font-sans antialiased;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
-    env(safe-area-inset-left);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
 
 body.signing {
@@ -28,6 +28,30 @@ select,
 textarea,
 button {
   font: inherit;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+.tabbar {
+  padding-bottom: env(safe-area-inset-bottom);
+  transition: transform 0.18s ease;
+}
+
+html.kb-open .tabbar {
+  transform: translateY(110%);
+}
+
+.cart-dock {
+  bottom: calc(4.25rem + env(safe-area-inset-bottom) + var(--kb));
+  transition: bottom 0.18s ease;
+}
+
+html.kb-open .cart-dock {
+  bottom: calc(0.5rem + var(--kb));
 }
 
 @media print {

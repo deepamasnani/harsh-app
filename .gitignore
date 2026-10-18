@@ -22,3 +22,5 @@ minio/minio-server
 web/.next/
 web/.vercel
 *.tsbuildinfo
+.vercel
+.env*

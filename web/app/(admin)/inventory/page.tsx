@@ -98,8 +98,7 @@ export default function Inventory() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
         <div>
-          <p className="text-[11px] tracking-[0.22em] uppercase text-stone-500">Inventory</p>
-          <h1 className="font-display text-4xl mt-1">Stock list</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Stock</h1>
         </div>
         <div className="flex flex-wrap gap-2">
           <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={onFile} />

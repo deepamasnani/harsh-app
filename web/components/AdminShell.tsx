@@ -9,13 +9,13 @@ const links = [
   { to: "/", icon: LayoutDashboard, label: "Home", end: true },
   { to: "/billing", icon: Receipt, label: "Billing" },
   { to: "/inventory", icon: Package, label: "Stock" },
-  { to: "/invoices", icon: BookOpen, label: "Invoices" },
+  { to: "/invoices", icon: BookOpen, label: "Bills" },
   { to: "/creditors", icon: Truck, label: "Credit" },
 ];
 
 function itemClass(active: boolean) {
   return `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-    active ? "bg-brass-500 text-ink" : "text-stone-300 hover:bg-white/5 hover:text-white"
+    active ? "bg-brass-600 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"
   }`;
 }
 
@@ -35,10 +35,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="min-h-screen lg:flex">
+    <div className="min-h-dvh lg:flex">
       <aside className="no-print hidden lg:flex w-60 shrink-0 flex-col bg-ink text-white">
         <div className="px-5 pt-8 pb-6 border-b border-white/10">
-          <p className="font-display text-2xl leading-none">Harsh</p>
+          <p className="text-2xl font-semibold leading-none tracking-tight">Harsh</p>
           <p className="text-[11px] tracking-[0.22em] uppercase text-brass-400 mt-1">Hardware</p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
@@ -54,42 +54,42 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </Link>
         </nav>
         <div className="p-4 border-t border-white/10">
-          <p className="text-xs text-stone-400">{user?.full_name}</p>
-          <button onClick={signOut} className="mt-2 flex items-center gap-2 text-sm text-stone-300 hover:text-white">
+          <p className="text-xs text-slate-400">{user?.full_name}</p>
+          <button onClick={signOut} className="mt-2 flex items-center gap-2 text-sm text-slate-300 hover:text-white">
             <LogOut size={15} /> Sign out
           </button>
         </div>
       </aside>
 
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
-        <header className="no-print lg:hidden sticky top-0 z-20 bg-ink text-white px-4 py-3 flex items-center justify-between">
+        <header className="no-print lg:hidden sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3 flex items-center justify-between">
           <div>
-            <p className="font-display text-xl leading-none">Harsh Hardware</p>
-            <p className="text-[10px] tracking-widest uppercase text-brass-400 mt-1">Owner desk</p>
+            <p className="text-lg font-semibold leading-none tracking-tight">Harsh Hardware</p>
+            <p className="text-[10px] tracking-widest uppercase text-brass-600 mt-1">Owner desk</p>
           </div>
           <div className="flex items-center gap-1">
-            <Link href="/settings" className="text-stone-300 p-2" aria-label="Settings">
+            <Link href="/settings" className="text-slate-600 p-2" aria-label="Settings">
               <Settings size={18} />
             </Link>
-            <button onClick={signOut} className="text-stone-300 p-2" aria-label="Sign out">
+            <button onClick={signOut} className="text-slate-600 p-2" aria-label="Sign out">
               <LogOut size={18} />
             </button>
           </div>
         </header>
-        <main className="max-w-6xl mx-auto px-4 py-5 lg:px-8 lg:py-8">{children}</main>
+        <main className="max-w-6xl mx-auto px-4 py-4 lg:px-8 lg:py-8">{children}</main>
       </div>
 
-      <nav className="no-print lg:hidden fixed bottom-0 inset-x-0 z-30 bg-ink text-white border-t border-white/10 pb-[env(safe-area-inset-bottom)]">
+      <nav className="tabbar no-print lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-slate-200">
         <div className="grid grid-cols-5">
           {links.map(({ to, icon: Icon, label, end }) => (
             <Link
               key={to}
               href={to}
-              className={`flex flex-col items-center gap-1 py-2.5 text-[10px] ${
-                isActive(to, end) ? "text-brass-400" : "text-stone-400"
+              className={`flex flex-col items-center gap-0.5 py-2 text-[10px] ${
+                isActive(to, end) ? "text-brass-600" : "text-slate-400"
               }`}
             >
-              <Icon size={18} />
+              <Icon size={20} />
               {label}
             </Link>
           ))}

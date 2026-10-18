@@ -7,13 +7,15 @@ import { useParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { inr, qty, when } from "@/lib/utils";
 import { useAuth } from "@/components/AuthProvider";
-import AuthImg, { openAuthedFile } from "@/components/AuthImg";
+import AuthImg from "@/components/AuthImg";
+import { saveOrShareFile } from "@/lib/share-file";
 
 export default function InvoicePrint() {
   const { id } = useParams();
   const { user } = useAuth();
   const [inv, setInv] = useState<any>(null);
   const [err, setErr] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     api(`/api/invoices/${id}`).then(setInv).catch((e) => setErr(e.message));
@@ -34,17 +36,30 @@ export default function InvoicePrint() {
           Back
         </Link>
         <div className="flex gap-2">
-          <button onClick={() => window.print()} className="rounded-xl bg-ink text-white px-4 py-2 text-sm font-semibold">
-            Print
+          <button
+            onClick={async () => {
+              setErr("");
+              setSaving(true);
+              try {
+                if (inv.pdf_url) {
+                  await saveOrShareFile(inv.pdf_url, `${inv.number}.pdf`, "application/pdf");
+                } else {
+                  window.print();
+                }
+              } catch (e: any) {
+                try {
+                  window.print();
+                } catch {
+                  setErr(e.message || "Could not save the bill");
+                }
+              } finally {
+                setSaving(false);
+              }
+            }}
+            className="rounded-xl bg-brass-600 text-white px-4 py-2 text-sm font-semibold"
+          >
+            {saving ? "Preparing…" : "Save / Print"}
           </button>
-          {inv.pdf_url && (
-            <button
-              onClick={() => openAuthedFile(inv.pdf_url)}
-              className="rounded-xl border border-ink px-4 py-2 text-sm font-semibold"
-            >
-              PDF
-            </button>
-          )}
         </div>
       </div>
 

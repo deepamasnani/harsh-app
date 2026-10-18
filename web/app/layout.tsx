@@ -1,21 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Serif_Display, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import RegisterSW from "@/components/RegisterSW";
-
-const display = DM_Serif_Display({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-display",
-  display: "swap",
-});
-const sans = Schibsted_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-sans",
-  display: "swap",
-});
+import KeyboardInset from "@/components/KeyboardInset";
 
 export const metadata: Metadata = {
   title: "Harsh Hardware",
@@ -26,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1c1612",
+  themeColor: "#0F766E",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -35,7 +22,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${sans.variable} antialiased`}>
+      <body className="antialiased">
+        <KeyboardInset />
         <AuthProvider>{children}</AuthProvider>
         <RegisterSW />
       </body>

@@ -56,13 +56,16 @@ export async function POST(req: Request) {
     lineTotal: number;
   }[] = [];
   let subtotal = 0;
-  const stockMoves: { id: number; qty: number }[] = [];
+  const stockMoves: { id: number; qty: number; price: number }[] = [];
   for (const row of items) {
     const quantity = Number(row.quantity);
     if (quantity <= 0) return jsonError("Quantity must be more than 0");
     const product = await prisma.product.findUnique({ where: { id: Number(row.product_id) } });
     if (!product || !product.isActive) return jsonError(`Unknown product id ${row.product_id}`);
-    const lineTotal = money(product.price * quantity);
+    const rawPrice = row.unit_price ?? row.price;
+    const unitPrice = rawPrice === undefined || rawPrice === null || rawPrice === "" ? product.price : Number(rawPrice);
+    if (!Number.isFinite(unitPrice) || unitPrice < 0) return jsonError(`Enter a valid rate for ${product.name}`);
+    const lineTotal = money(unitPrice * quantity);
     subtotal += lineTotal;
     lines.push({
       productId: product.id,
@@ -70,10 +73,10 @@ export async function POST(req: Request) {
       name: product.name,
       unit: product.unit,
       quantity,
-      unitPrice: product.price,
+      unitPrice: money(unitPrice),
       lineTotal,
     });
-    stockMoves.push({ id: product.id, qty: quantity });
+    stockMoves.push({ id: product.id, qty: quantity, price: money(unitPrice) });
   }
 
   const cust = await getOrCreateCustomer(customerName, body.customer_phone, body.customer_shop);
@@ -82,7 +85,10 @@ export async function POST(req: Request) {
     for (const m of stockMoves) {
       await tx.product.update({
         where: { id: m.id },
-        data: { stock: { decrement: m.qty } },
+        data: {
+          stock: { decrement: m.qty },
+          ...(m.price > 0 ? { price: m.price } : {}),
+        },
       });
     }
     return tx.invoice.create({

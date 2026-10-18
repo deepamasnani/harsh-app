@@ -9,18 +9,18 @@ export default function StaffShell({ children }: { children: React.ReactNode }) 
   const nav = useRouter();
 
   return (
-    <div className="min-h-screen bg-paper">
-      <header className="sticky top-0 z-20 bg-ink text-white px-4 py-3 flex items-center justify-between">
+    <div className="min-h-dvh bg-paper">
+      <header className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3 flex items-center justify-between">
         <div>
-          <p className="font-display text-xl leading-none">Deliveries</p>
-          <p className="text-[10px] tracking-widest uppercase text-brass-400 mt-1">{user?.full_name || "Staff"}</p>
+          <p className="text-lg font-semibold leading-none">Deliveries</p>
+          <p className="text-[10px] tracking-widest uppercase text-brass-600 mt-1">{user?.full_name || "Staff"}</p>
         </div>
         <button
           onClick={async () => {
             await logout();
             nav.push("/login");
           }}
-          className="text-stone-300 p-2"
+          className="text-slate-600 p-2"
           aria-label="Sign out"
         >
           <LogOut size={18} />

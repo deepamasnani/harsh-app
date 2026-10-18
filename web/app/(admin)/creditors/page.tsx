@@ -23,9 +23,8 @@ export default function Creditors() {
 
   return (
     <div>
-      <p className="text-[11px] tracking-[0.22em] uppercase text-stone-500">Signed dues</p>
-      <h1 className="font-display text-4xl mt-1">Creditors</h1>
-      <p className="text-stone-600 mt-2 mb-6">
+      <h1 className="text-2xl font-semibold tracking-tight">Credit</h1>
+      <p className="text-slate-600 mt-2 mb-6">
         {folders.length} {folders.length === 1 ? "folder" : "folders"} · outstanding {inr(outstanding)}
       </p>
 

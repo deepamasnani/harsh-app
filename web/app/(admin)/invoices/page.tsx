@@ -40,9 +40,8 @@ export default function Invoices() {
 
   return (
     <div>
-      <p className="text-[11px] tracking-[0.22em] uppercase text-stone-500">Ledger</p>
-      <h1 className="font-display text-4xl mt-1 mb-1">Invoices</h1>
-      <p className="text-stone-500 text-sm mb-4">One folder per customer. Open it to see every bill.</p>
+      <h1 className="text-2xl font-semibold tracking-tight mb-1">Invoices</h1>
+      <p className="text-slate-500 text-sm mb-4">One folder per customer.</p>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
         {TABS.map((t) => (
