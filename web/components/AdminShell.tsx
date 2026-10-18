@@ -62,7 +62,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </aside>
 
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
-        <header className="no-print lg:hidden sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+        <header className="app-header no-print lg:hidden sticky top-0 z-20 border-b border-slate-200 px-4 pb-3 flex items-center justify-between">
           <div>
             <p className="text-lg font-semibold leading-none tracking-tight">Harsh Hardware</p>
             <p className="text-[10px] tracking-widest uppercase text-brass-600 mt-1">Owner desk</p>
@@ -85,7 +85,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <Link
               key={to}
               href={to}
-              className={`flex flex-col items-center gap-0.5 py-2 text-[10px] ${
+              className={`flex flex-col items-center gap-0.5 py-2 px-1 min-w-0 text-[10px] ${
                 isActive(to, end) ? "text-brass-600" : "text-slate-400"
               }`}
             >

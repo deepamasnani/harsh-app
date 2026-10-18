@@ -98,7 +98,7 @@ export default function SignaturePad({ onChange }: { onChange?: (v: string | nul
       <div
         ref={wrapRef}
         className="relative w-full rounded-2xl border-2 border-dashed border-stone-400 bg-white overflow-hidden"
-        style={{ height: "min(42vh, 280px)", minHeight: 180, touchAction: "none" }}
+        style={{ height: "min(28dvh, 200px)", minHeight: 140, touchAction: "none" }}
       >
         <canvas
           ref={canvasRef}

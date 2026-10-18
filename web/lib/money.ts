@@ -62,6 +62,21 @@ export function todayBoundsUtc() {
   return { start, end };
 }
 
+export function monthBoundsIst(ym?: string) {
+  const now = new Date(Date.now() + IST_OFFSET_MS);
+  let year = now.getUTCFullYear();
+  let month = now.getUTCMonth();
+  if (ym && /^\d{4}-\d{2}$/.test(ym)) {
+    year = Number(ym.slice(0, 4));
+    month = Number(ym.slice(5, 7)) - 1;
+  }
+  const start = new Date(Date.UTC(year, month, 1) - IST_OFFSET_MS);
+  const end = new Date(Date.UTC(year, month + 1, 1) - IST_OFFSET_MS);
+  const key = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const label = new Date(Date.UTC(year, month, 1)).toLocaleString("en-IN", { month: "long", year: "numeric", timeZone: "UTC" });
+  return { start, end, key, label, year, month };
+}
+
 export function isToday(dt: Date | null | undefined) {
   if (!dt) return false;
   const { start, end } = todayBoundsUtc();

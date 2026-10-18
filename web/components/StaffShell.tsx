@@ -10,7 +10,7 @@ export default function StaffShell({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-dvh bg-paper">
-      <header className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-3 flex items-center justify-between">
+      <header className="app-header sticky top-0 z-20 border-b border-slate-200 px-4 pb-3 flex items-center justify-between">
         <div>
           <p className="text-lg font-semibold leading-none">Deliveries</p>
           <p className="text-[10px] tracking-widest uppercase text-brass-600 mt-1">{user?.full_name || "Staff"}</p>

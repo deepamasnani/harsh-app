@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { inr } from "@/lib/utils";
+import { inr, qty } from "@/lib/utils";
 
 export default function Dashboard() {
   const [data, setData] = useState<any>(null);
@@ -35,6 +35,21 @@ export default function Dashboard() {
           </Link>
         ))}
       </div>
+
+      <Link href="/stats" className="mt-4 block rounded-3xl bg-white p-4 border border-slate-200">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs text-slate-500">{data.month_label || "This month"}</p>
+          <p className="text-xs font-medium text-brass-700">Full stats</p>
+        </div>
+        <p className="text-2xl font-semibold mt-2 tracking-tight">{inr(data.month_amount)}</p>
+        <p className="text-sm text-slate-500 mt-1">{data.month_bills || 0} bills</p>
+        {data.top_product && (
+          <p className="text-sm text-slate-600 mt-3 leading-snug">
+            Best seller · {data.top_product.name} · {qty(data.top_product.qty)} · {inr(data.top_product.sale)}
+          </p>
+        )}
+      </Link>
+
       <Link href="/billing" className="mt-6 flex items-center justify-center rounded-2xl bg-brass-600 text-white py-3.5 font-semibold">
         New bill
       </Link>

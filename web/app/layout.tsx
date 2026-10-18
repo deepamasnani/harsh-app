@@ -8,12 +8,12 @@ export const metadata: Metadata = {
   title: "Harsh Hardware",
   description: "Stock, bills, and credit for Harsh Hardware",
   applicationName: "Harsh Hardware",
-  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Harsh HW" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Harsh HW" },
   manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0F766E",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

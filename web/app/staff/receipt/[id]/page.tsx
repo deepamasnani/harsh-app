@@ -142,8 +142,8 @@ export default function ReceiptDetail() {
       )}
 
       {pending && mode === "credit" && (
-        <div className="fixed inset-0 z-50 bg-paper flex flex-col">
-          <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+        <div className="sign-sheet fixed inset-0 z-50 bg-paper flex flex-col">
+          <div className="px-4 pt-3 pb-2 flex items-center justify-between">
             <button onClick={() => setMode(null)} className="text-sm underline">
               Back
             </button>
@@ -175,7 +175,7 @@ export default function ReceiptDetail() {
             <button
               onClick={() => deliver("credit")}
               disabled={busy || (creditDue > 0 && !sig)}
-              className="mt-4 mb-6 w-full rounded-2xl bg-brass-500 text-ink py-4 text-lg font-semibold disabled:opacity-50"
+              className="mt-4 mb-4 w-full rounded-2xl bg-brass-600 text-white py-4 text-lg font-semibold disabled:opacity-50"
             >
               {busy ? "Saving…" : creditDue > 0 ? "Save as credit" : "Save as paid"}
             </button>

@@ -31,7 +31,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-6 bg-paper">
+    <div className="min-h-dvh flex items-center justify-center p-6 bg-paper" style={{ paddingTop: "max(1.5rem, env(safe-area-inset-top))" }}>
       <form onSubmit={submit} className="w-full max-w-sm">
         <p className="text-[11px] tracking-[0.22em] uppercase text-brass-600">Harsh Hardware</p>
         <h1 className="text-3xl font-semibold tracking-tight mt-2 mb-6">Sign in</h1>

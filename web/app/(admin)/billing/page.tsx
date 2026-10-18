@@ -103,7 +103,6 @@ export default function Billing() {
     });
     setQ("");
     setProducts([]);
-    setCartOpen(true);
   }
 
   function setQty(id, quantity) {
