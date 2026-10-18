@@ -55,7 +55,7 @@ export function invoiceOut(inv: Inv, withItems = true) {
 export async function nextNumber(prisma: { invoice: { findFirst: Function } }) {
   const last = await prisma.invoice.findFirst({ orderBy: { id: "desc" } });
   const n = last ? last.id + 1 : 1;
-  return `HH-${String(n).padStart(5, "0")}`;
+  return `BB-${String(n).padStart(5, "0")}`;
 }
 
 export const invoiceInclude = {

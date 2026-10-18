@@ -4,8 +4,6 @@ import { requireUser, jsonError } from "@/lib/auth";
 import { invoiceInclude, invoiceOut } from "@/lib/invoices";
 import { isToday, money } from "@/lib/money";
 import { archiveInvoice, pngFromDataUrl } from "@/lib/archive";
-import { driveStatus, uploadInvoiceDump } from "@/lib/drive";
-import { buildInvoicePdf } from "@/lib/pdf";
 
 export const maxDuration = 60;
 
@@ -23,10 +21,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (cash < 0) return jsonError("Part payment cannot be negative");
   if (cash > inv.total) return jsonError("Part payment cannot exceed the bill");
 
-  let signaturePath: string | null = inv.signaturePath;
-  let signaturePng: Buffer | null = null;
-  let signatureFileId: string | null = inv.signatureFileId;
-
   if (body.payment === "paid" || cash >= inv.total) {
     const updated = await prisma.invoice.update({
       where: { id: inv.id },
@@ -40,55 +34,32 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       },
       include: invoiceInclude,
     });
-    archiveInvoice(updated.id).catch(() => undefined);
-    return NextResponse.json(invoiceOut(updated));
+    await archiveInvoice(updated.id);
+    const fresh = await prisma.invoice.findUnique({ where: { id: updated.id }, include: invoiceInclude });
+    return NextResponse.json(invoiceOut(fresh || updated));
   }
 
   if (!body.signature) return jsonError("Customer signature is required for the remaining credit");
+  let signaturePng: Buffer | null = null;
   try {
     signaturePng = pngFromDataUrl(String(body.signature));
   } catch {
     return jsonError("Invalid signature image");
   }
   if (!signaturePng || signaturePng.length < 80) return jsonError("Signature is empty");
-  signaturePath = `${inv.number}.png`;
-
-  const drive = await driveStatus();
-  if (drive.connected) {
-    try {
-      const pdf = await buildInvoicePdf(
-        { ...inv, status: "credit", amountPaid: cash, deliveredAt: new Date() },
-        signaturePng
-      );
-      const ids = await uploadInvoiceDump({
-        customerName: inv.customerName,
-        createdAt: inv.createdAt,
-        number: inv.number,
-        pdf,
-        signaturePng,
-      });
-      signatureFileId = ids.signatureFileId;
-      await prisma.invoice.update({
-        where: { id: inv.id },
-        data: { pdfFileId: ids.pdfId, signatureFileId },
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
 
   const updated = await prisma.invoice.update({
     where: { id: inv.id },
     data: {
       status: "credit",
       amountPaid: cash,
-      signaturePath,
-      signatureFileId,
+      signaturePath: `${inv.number}.png`,
       deliveredAt: new Date(),
       payments: cash > 0 ? { create: { amount: cash, kind: "delivery", note: "Part payment on delivery" } } : undefined,
     },
     include: invoiceInclude,
   });
-  if (!drive.connected) archiveInvoice(updated.id, signaturePng).catch(() => undefined);
-  return NextResponse.json(invoiceOut(updated));
+  await archiveInvoice(updated.id, signaturePng);
+  const fresh = await prisma.invoice.findUnique({ where: { id: updated.id }, include: invoiceInclude });
+  return NextResponse.json(invoiceOut(fresh || updated));
 }

@@ -5,10 +5,10 @@ import RegisterSW from "@/components/RegisterSW";
 import KeyboardInset from "@/components/KeyboardInset";
 
 export const metadata: Metadata = {
-  title: "Harsh Hardware",
-  description: "Stock, bills, and credit for Harsh Hardware",
-  applicationName: "Harsh Hardware",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "Harsh HW" },
+  title: "BB Traders",
+  description: "Stock, bills, and credit for BB Traders",
+  applicationName: "BB Traders",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "BB Traders" },
   manifest: "/manifest.webmanifest",
 };
 

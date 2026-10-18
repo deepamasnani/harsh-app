@@ -1,4 +1,4 @@
-# Harsh Hardware
+# BB Traders
 
 Owner bills from a phone call. Delivery staff collect cash or a credit signature. Invoice PDFs and signatures dump to Google Drive.
 
@@ -83,4 +83,4 @@ Installable (icon, full screen, no browser chrome). Not an offline POS.
 2. Open **Stock** — sample SKUs after seed. Optional: import `web/public/sample_inventory.csv`.
 3. Open **Billing**. Name a shop, add items, generate the bill.
 4. Sign in as **staff**, open today’s receipt, collect cash or take a credit signature.
-5. Admin: **Invoices** to print, **Credit** to settle dues. PDFs land in Drive under `Harsh Hardware/invoices/…`.
+5. Admin: **Invoices** to print, **Credit** to settle dues. PDFs land in Drive under `BB Traders/invoices/{customer}/{date}/`. Signatures land under `BB Traders/signatures/{customer}/{date}/`.

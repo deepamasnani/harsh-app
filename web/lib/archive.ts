@@ -3,7 +3,17 @@ import { invoiceInclude } from "./invoices";
 import { buildInvoicePdf } from "./pdf";
 import { downloadDriveFile, driveStatus, uploadInvoiceDump } from "./drive";
 
+const inflight = new Map<number, Promise<void>>();
+
 export async function archiveInvoice(invoiceId: number, signaturePng?: Buffer | null) {
+  const pending = inflight.get(invoiceId);
+  if (pending) await pending;
+  const job = dumpInvoice(invoiceId, signaturePng).finally(() => inflight.delete(invoiceId));
+  inflight.set(invoiceId, job);
+  return job;
+}
+
+async function dumpInvoice(invoiceId: number, signaturePng?: Buffer | null) {
   const inv = await prisma.invoice.findUnique({
     where: { id: invoiceId },
     include: invoiceInclude,

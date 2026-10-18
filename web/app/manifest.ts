@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Harsh Hardware",
-    short_name: "Harsh HW",
-    description: "Stock, bills, and credit for Harsh Hardware",
+    name: "BB Traders",
+    short_name: "BB Traders",
+    description: "Stock, bills, and credit for BB Traders",
     id: "/",
     start_url: "/",
     scope: "/",

@@ -1,4 +1,4 @@
-# Harsh Hardware — Product Plan
+# BB Traders — Product Plan
 
 A two-user web app for a hardware / building-materials shop.
 

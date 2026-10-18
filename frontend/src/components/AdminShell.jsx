@@ -36,8 +36,8 @@ export default function AdminShell() {
     <div className="min-h-screen lg:flex">
       <aside className="no-print hidden lg:flex w-60 shrink-0 flex-col bg-ink text-white">
         <div className="px-5 pt-8 pb-6 border-b border-white/10">
-          <p className="font-display text-2xl leading-none">Harsh</p>
-          <p className="text-[11px] tracking-[0.22em] uppercase text-brass-400 mt-1">Hardware</p>
+          <p className="font-display text-2xl leading-none">BB</p>
+          <p className="text-[11px] tracking-[0.22em] uppercase text-brass-400 mt-1">Traders</p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {links.map((l) => (
@@ -61,7 +61,7 @@ export default function AdminShell() {
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
         <header className="no-print lg:hidden sticky top-0 z-20 bg-ink text-white px-4 py-3 flex items-center justify-between">
           <div>
-            <p className="font-display text-xl leading-none">Harsh Hardware</p>
+            <p className="font-display text-xl leading-none">BB Traders</p>
             <p className="text-[10px] tracking-widest uppercase text-brass-400 mt-1">Owner desk</p>
           </div>
           <button

@@ -33,7 +33,7 @@ export default function Login() {
       <div className="hidden lg:flex bg-ink text-white flex-col justify-between p-12">
         <div>
           <p className="text-[11px] tracking-[0.28em] uppercase text-brass-400">Since the counter opened</p>
-          <h1 className="font-display text-6xl mt-4 leading-none">Harsh<br />Hardware</h1>
+          <h1 className="font-display text-6xl mt-4 leading-none">BB<br />Traders</h1>
         </div>
         <p className="text-stone-400 max-w-sm text-lg leading-relaxed">
           Stock on the shelf. A bill on the call. A signature on the doorstep.
@@ -42,7 +42,7 @@ export default function Login() {
 
       <div className="flex items-center justify-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm">
-          <p className="lg:hidden font-display text-4xl mb-1">Harsh Hardware</p>
+          <p className="lg:hidden font-display text-4xl mb-1">BB Traders</p>
           <h2 className="text-xl font-semibold mb-6">Sign in</h2>
           <label className="block text-sm text-stone-600 mb-1">Username</label>
           <input

@@ -15,11 +15,11 @@ export default function Icon() {
           justifyContent: "center",
           background: "#0f766e",
           color: "#ffffff",
-          fontSize: 220,
+          fontSize: 170,
           fontWeight: 700,
         }}
       >
-        H
+        BB
       </div>
     ),
     size

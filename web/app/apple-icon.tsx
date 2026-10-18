@@ -15,11 +15,11 @@ export default function AppleIcon() {
           justifyContent: "center",
           background: "#0f766e",
           color: "#ffffff",
-          fontSize: 88,
+          fontSize: 64,
           fontWeight: 700,
         }}
       >
-        H
+        BB
       </div>
     ),
     size
