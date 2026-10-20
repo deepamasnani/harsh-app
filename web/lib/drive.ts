@@ -22,7 +22,7 @@ function folderCache() {
 }
 
 function shopRootName() {
-  return shop().name || "BB Traders";
+  return shop().name || "Meraki Edge Band";
 }
 
 function appOrigin(origin?: string) {

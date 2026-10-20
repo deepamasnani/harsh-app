@@ -45,8 +45,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     <div className="min-h-dvh lg:flex">
       <aside className="no-print hidden lg:flex w-60 shrink-0 flex-col bg-ink text-white">
         <div className="px-5 pt-8 pb-6 border-b border-white/10">
-          <p className="text-2xl font-semibold leading-none tracking-tight">BB</p>
-          <p className="text-[11px] tracking-[0.22em] uppercase text-brass-400 mt-1">Traders</p>
+          <p className="text-2xl font-semibold leading-none tracking-tight">Meraki</p>
+          <p className="text-[11px] tracking-[0.18em] uppercase text-brass-400 mt-1">Edge Band</p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {links.map((l) => (
@@ -71,7 +71,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <div className="flex-1 min-w-0 pb-24 lg:pb-0">
         <header className="app-header no-print lg:hidden sticky top-0 z-20 border-b border-slate-200 px-4 pb-3 flex items-center justify-between">
           <div>
-            <p className="text-lg font-semibold leading-none tracking-tight">BB Traders</p>
+            <p className="text-lg font-semibold leading-none tracking-tight">Meraki Edge Band</p>
             <p className="text-[10px] tracking-widest uppercase text-brass-600 mt-1">Owner desk</p>
           </div>
           <div className="flex items-center gap-1">

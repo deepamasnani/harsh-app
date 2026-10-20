@@ -18,7 +18,7 @@ export default function StaffShell({ children }: { children: React.ReactNode }) 
     <div className="min-h-dvh bg-paper">
       <header className="app-header sticky top-0 z-20 border-b border-slate-200 px-4 pb-3 flex items-center justify-between">
         <div>
-          <p className="text-lg font-semibold leading-none">BB Traders</p>
+          <p className="text-lg font-semibold leading-none">Meraki Edge Band</p>
           <p className="text-[10px] tracking-widest uppercase text-brass-600 mt-1">{user?.full_name || "Staff"}</p>
         </div>
         <button

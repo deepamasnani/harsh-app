@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "BB Traders",
-    short_name: "BB Traders",
-    description: "Stock, bills, and credit for BB Traders",
+    name: "Meraki Edge Band",
+    short_name: "Meraki",
+    description: "Stock, bills, and credit for Meraki Edge Band",
     id: "/",
     start_url: "/",
     scope: "/",

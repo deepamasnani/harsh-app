@@ -5,10 +5,10 @@ import RegisterSW from "@/components/RegisterSW";
 import KeyboardInset from "@/components/KeyboardInset";
 
 export const metadata: Metadata = {
-  title: "BB Traders",
-  description: "Stock, bills, and credit for BB Traders",
-  applicationName: "BB Traders",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "BB Traders" },
+  title: "Meraki Edge Band",
+  description: "Stock, bills, and credit for Meraki Edge Band",
+  applicationName: "Meraki Edge Band",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Meraki" },
   manifest: "/manifest.webmanifest",
 };
 

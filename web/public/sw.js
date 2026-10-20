@@ -1,4 +1,4 @@
-const CACHE = "bb-traders-v6";
+const CACHE = "meraki-edge-v1";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(self.skipWaiting());

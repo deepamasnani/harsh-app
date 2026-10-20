@@ -74,7 +74,7 @@ export async function buildInvoicePdf(
   const due = money(Math.max(0, inv.total - inv.amountPaid));
   let y = PAGE.h - 48;
 
-  page.drawText(s.name || "BB Traders", { x: M, y, size: 22, font: bold, color: INK });
+  page.drawText(s.name || "Meraki Edge Band", { x: M, y, size: 22, font: bold, color: INK });
   drawRight(page, "INVOICE", RIGHT, y + 8, 9, font, MUTED);
   y -= 16;
   drawRight(page, inv.number, RIGHT, y, 13, bold, INK);
