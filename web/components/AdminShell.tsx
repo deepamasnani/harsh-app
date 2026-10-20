@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, LayoutDashboard, LogOut, Package, Receipt, Settings, Truck } from "lucide-react";
+import { BookOpen, LayoutDashboard, LogOut, Package, Receipt, Settings, Truck, Users } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { api } from "@/lib/api";
 
@@ -11,6 +11,7 @@ const links = [
   { to: "/", icon: LayoutDashboard, label: "Home", end: true },
   { to: "/billing", icon: Receipt, label: "Billing" },
   { to: "/inventory", icon: Package, label: "Stock" },
+  { to: "/customers", icon: Users, label: "Customers" },
   { to: "/invoices", icon: BookOpen, label: "Bills" },
   { to: "/creditors", icon: Truck, label: "Credit" },
 ];
@@ -34,6 +35,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     api("/api/dashboard").catch(() => undefined);
     api("/api/invoices?status=credit").catch(() => undefined);
+    api("/api/customers").catch(() => undefined);
   }, []);
 
   async function signOut() {
@@ -87,7 +89,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </div>
 
       <nav className="tabbar no-print lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-slate-200">
-        <div className="grid grid-cols-5">
+        <div className="grid grid-cols-6">
           {links.map(({ to, icon: Icon, label, end }) => (
             <Link
               key={to}

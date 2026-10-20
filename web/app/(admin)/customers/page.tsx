@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { inr } from "@/lib/utils";
 
 type Customer = {
   id: number;
@@ -10,6 +11,7 @@ type Customer = {
   phone: string;
   shop: string;
   invoice_count: number;
+  credit_outstanding: number;
 };
 
 export default function CustomersPage() {
@@ -18,18 +20,28 @@ export default function CustomersPage() {
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      api(`/api/customers?q=${encodeURIComponent(q.trim())}&limit=60`)
-        .then(setRows)
-        .catch((e: Error) => setErr(e.message));
-    }, 140);
-    return () => clearTimeout(t);
-  }, [q]);
+    api("/api/customers")
+      .then(setRows)
+      .catch((e: Error) => setErr(e.message));
+  }, []);
+
+  const needle = q.trim().toLowerCase();
+  const shown = useMemo(
+    () =>
+      needle
+        ? rows.filter((c) =>
+            [c.name, c.phone, c.shop].some((s) => String(s || "").toLowerCase().includes(needle))
+          )
+        : rows,
+    [rows, needle]
+  );
 
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight mb-1">Customers</h1>
-      <p className="text-slate-500 text-sm mb-4">Saved from bills. Tap one to start a new bill with their name and phone filled in.</p>
+      <p className="text-slate-500 text-sm mb-4">
+        {needle ? `${shown.length} of ${rows.length}` : rows.length} saved names. Open one for bills, credit, and returns.
+      </p>
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
@@ -39,21 +51,32 @@ export default function CustomersPage() {
       />
       {err && <p className="text-red-700 text-sm mb-3">{err}</p>}
       <div className="space-y-2">
-        {rows.map((c) => (
+        {shown.map((c) => (
           <Link
             key={c.id}
-            href={`/billing?name=${encodeURIComponent(c.name)}&phone=${encodeURIComponent(c.phone)}&shop=${encodeURIComponent(c.shop)}`}
+            href={`/customers/${c.id}`}
             className="block rounded-2xl bg-white border border-slate-200 px-4 py-3"
           >
-            <p className="font-medium">{c.name}</p>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {c.phone || "No phone"}
-              {c.shop && c.shop !== c.name ? ` · ${c.shop}` : ""}
-              {` · ${c.invoice_count} ${c.invoice_count === 1 ? "bill" : "bills"}`}
-            </p>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-medium">{c.name}</p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {c.phone || "No phone"}
+                  {c.shop && c.shop !== c.name ? ` · ${c.shop}` : ""}
+                  {` · ${c.invoice_count} ${c.invoice_count === 1 ? "bill" : "bills"}`}
+                </p>
+              </div>
+              {c.credit_outstanding > 0 && (
+                <p className="text-xs font-semibold text-orange-900 shrink-0">{inr(c.credit_outstanding)}</p>
+              )}
+            </div>
           </Link>
         ))}
-        {!rows.length && <p className="text-slate-500 text-sm">No saved names yet. They appear after you generate a bill.</p>}
+        {!shown.length && (
+          <p className="text-slate-500 text-sm">
+            {needle ? "No matching customer." : "No saved names yet. They appear after you generate a bill."}
+          </p>
+        )}
       </div>
     </div>
   );

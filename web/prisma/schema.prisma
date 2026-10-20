@@ -17,24 +17,26 @@ model User {
 }
 
 model Product {
-  id         Int           @id @default(autoincrement())
-  sku        String        @unique
-  name       String
-  unit       String        @default("pcs")
-  price      Float         @default(0)
-  stock      Float         @default(0)
-  category   String        @default("General")
-  isActive   Boolean       @default(true)
+  id           Int           @id @default(autoincrement())
+  sku          String        @unique
+  name         String
+  unit         String        @default("pcs")
+  price        Float         @default(0)
+  stock        Float         @default(0)
+  category     String        @default("General")
+  isActive     Boolean       @default(true)
   invoiceItems InvoiceItem[]
+  returns      StockReturn[]
 }
 
 model Customer {
-  id       Int       @id @default(autoincrement())
+  id       Int           @id @default(autoincrement())
   name     String
-  nameKey  String    @unique
-  phone    String    @default("")
-  shop     String    @default("")
+  nameKey  String        @unique
+  phone    String        @default("")
+  shop     String        @default("")
   invoices Invoice[]
+  returns  StockReturn[]
 }
 
 model Invoice {
@@ -75,6 +77,25 @@ model InvoiceItem {
   quantity  Float
   unitPrice Float
   lineTotal Float
+}
+
+model StockReturn {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+  productId  Int?
+  product    Product? @relation(fields: [productId], references: [id])
+  sku        String
+  name       String
+  unit       String   @default("pcs")
+  quantity   Float
+  unitPrice  Float
+  amount     Float
+  note       String   @default("")
+  createdAt  DateTime @default(now())
+
+  @@index([customerId])
+  @@index([createdAt])
 }
 
 model Payment {

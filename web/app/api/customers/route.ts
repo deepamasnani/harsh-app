@@ -10,7 +10,9 @@ export async function GET(req: NextRequest) {
   if (error) return error;
   const q = req.nextUrl.searchParams.get("q")?.trim() || "";
   const limitRaw = Number(req.nextUrl.searchParams.get("limit"));
-  const take = Math.min(Number.isFinite(limitRaw) && limitRaw > 0 ? limitRaw : q ? 12 : 40, 80);
+  const take = limitRaw
+    ? Math.min(Math.max(limitRaw, 1), 2000)
+    : undefined;
   const rows = await prisma.customer.findMany({
     where: q
       ? {
@@ -21,9 +23,15 @@ export async function GET(req: NextRequest) {
           ],
         }
       : {},
-    orderBy: q ? { name: "asc" } : { id: "desc" },
-    take,
-    include: { _count: { select: { invoices: true } } },
+    orderBy: { name: "asc" },
+    ...(take ? { take } : {}),
+    include: {
+      _count: { select: { invoices: true } },
+      invoices: {
+        where: { status: "credit" },
+        select: { total: true, amountPaid: true },
+      },
+    },
   });
   return NextResponse.json(
     rows.map((c) => ({
@@ -32,6 +40,7 @@ export async function GET(req: NextRequest) {
       phone: c.phone || "",
       shop: c.shop || "",
       invoice_count: c._count.invoices,
+      credit_outstanding: c.invoices.reduce((s, inv) => s + Math.max(0, inv.total - inv.amountPaid), 0),
       customer_key: customerKey(c.name, c.phone, c.id),
     }))
   );

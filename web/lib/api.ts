@@ -5,6 +5,7 @@ const TTL_MS: Record<string, number> = {
   "/api/dashboard": 20_000,
   "/api/products": 25_000,
   "/api/customers": 25_000,
+  "/api/returns": 12_000,
   "/api/credits": 15_000,
   "/api/invoices": 12_000,
   "/api/stats": 30_000,
