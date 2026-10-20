@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { money, monthBoundsIst, todayBoundsUtc } from "@/lib/money";
 
 export const preferredRegion = ["sin1"];
+export const maxDuration = 30;
 
 function n(value: unknown) {
   return Number(value || 0);

@@ -13,14 +13,18 @@ export default function AuthImg({ src, alt, className }: { src: string; alt: str
     setFailed(false);
     setUrl("");
     (async () => {
-      const res = await fetch(src, { credentials: "include" });
-      if (cancelled) return;
-      if (!res.ok) {
-        setFailed(true);
-        return;
+      try {
+        const res = await fetch(src, { credentials: "include", cache: "no-store" });
+        if (cancelled) return;
+        if (!res.ok) {
+          setFailed(true);
+          return;
+        }
+        objectUrl = URL.createObjectURL(await res.blob());
+        if (!cancelled) setUrl(objectUrl);
+      } catch {
+        if (!cancelled) setFailed(true);
       }
-      objectUrl = URL.createObjectURL(await res.blob());
-      if (!cancelled) setUrl(objectUrl);
     })();
     return () => {
       cancelled = true;

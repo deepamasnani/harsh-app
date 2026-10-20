@@ -1,5 +1,5 @@
 export async function saveOrShareFile(path: string, filename: string, mime: string) {
-  const res = await fetch(path, { credentials: "include" });
+  const res = await fetch(path, { credentials: "include", cache: "no-store" });
   if (!res.ok) throw new Error("Could not open file");
   const blob = await res.blob();
   const file = new File([blob], filename, { type: mime || blob.type || "application/octet-stream" });
