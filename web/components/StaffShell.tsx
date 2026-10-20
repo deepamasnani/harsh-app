@@ -1,12 +1,18 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useAuth } from "./AuthProvider";
+import { api } from "@/lib/api";
 
 export default function StaffShell({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const nav = useRouter();
+
+  useEffect(() => {
+    api("/api/invoices").catch(() => undefined);
+  }, []);
 
   return (
     <div className="min-h-dvh bg-paper">

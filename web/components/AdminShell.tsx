@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { BookOpen, LayoutDashboard, LogOut, Package, Receipt, Settings, Truck } from "lucide-react";
 import { useAuth } from "./AuthProvider";
+import { api } from "@/lib/api";
 
 const links = [
   { to: "/", icon: LayoutDashboard, label: "Home", end: true },
@@ -28,6 +30,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     if (end) return path === to;
     return path === to || path.startsWith(to + "/");
   }
+
+  useEffect(() => {
+    api("/api/dashboard").catch(() => undefined);
+    api("/api/invoices?status=credit").catch(() => undefined);
+  }, []);
 
   async function signOut() {
     await logout();

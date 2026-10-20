@@ -7,6 +7,7 @@ import { useParams, usePathname } from "next/navigation";
 import { api } from "@/lib/api";
 import AuthImg from "@/components/AuthImg";
 import PayBox from "@/components/PayBox";
+import SettleAllBox from "@/components/SettleAllBox";
 import StatusBadge from "@/components/StatusBadge";
 import { inr, when } from "@/lib/utils";
 
@@ -55,6 +56,9 @@ export default function CustomerFolder() {
       </p>
       {outstanding > 0 && (
         <p className="mt-2 text-orange-900 font-semibold">Outstanding {inr(outstanding)}</p>
+      )}
+      {creditOnly && (
+        <SettleAllBox customerKey={String(key)} outstanding={outstanding} onPaid={load} />
       )}
 
       <div className="mt-5 space-y-3">
