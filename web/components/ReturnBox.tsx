@@ -19,8 +19,8 @@ type Line = {
   sku: string;
   name: string;
   unit: string;
-  quantity: number;
-  unit_price: number;
+  quantity: number | "";
+  unit_price: number | "";
 };
 
 export default function ReturnBox({
@@ -55,12 +55,15 @@ export default function ReturnBox({
     [catalog, needle]
   );
 
-  const total = lines.reduce((s, l) => s + Number(l.unit_price || 0) * l.quantity, 0);
+  const total = lines.reduce((s, l) => s + Number(l.unit_price || 0) * Number(l.quantity || 0), 0);
 
   function add(p: Product) {
     setLines((prev) => {
       const hit = prev.find((l) => l.product_id === p.id);
-      if (hit) return prev.map((l) => (l.product_id === p.id ? { ...l, quantity: l.quantity + 1 } : l));
+      if (hit) {
+        const next = Number(hit.quantity || 0) + 1;
+        return prev.map((l) => (l.product_id === p.id ? { ...l, quantity: next } : l));
+      }
       return [
         ...prev,
         {
@@ -76,24 +79,38 @@ export default function ReturnBox({
     setQ("");
   }
 
-  function setQty(id: number, quantity: number) {
-    if (quantity <= 0) {
-      setLines((prev) => prev.filter((l) => l.product_id !== id));
+  function setQty(id: number, value: string) {
+    if (value === "") {
+      setLines((prev) => prev.map((l) => (l.product_id === id ? { ...l, quantity: "" } : l)));
       return;
     }
-    setLines((prev) => prev.map((l) => (l.product_id === id ? { ...l, quantity } : l)));
+    const n = Number(value);
+    if (!Number.isFinite(n) || n < 0) return;
+    setLines((prev) => prev.map((l) => (l.product_id === id ? { ...l, quantity: n } : l)));
   }
 
   function setPrice(id: number, value: string) {
+    if (value === "") {
+      setLines((prev) => prev.map((l) => (l.product_id === id ? { ...l, unit_price: "" } : l)));
+      return;
+    }
     const n = Number(value);
-    if (value !== "" && (!Number.isFinite(n) || n < 0)) return;
-    setLines((prev) => prev.map((l) => (l.product_id === id ? { ...l, unit_price: value === "" ? 0 : n } : l)));
+    if (!Number.isFinite(n) || n < 0) return;
+    setLines((prev) => prev.map((l) => (l.product_id === id ? { ...l, unit_price: n } : l)));
+  }
+
+  function remove(id: number) {
+    setLines((prev) => prev.filter((l) => l.product_id !== id));
   }
 
   async function submit() {
     setErr("");
     if (!lines.length) {
       setErr("Select at least one SKU");
+      return;
+    }
+    if (lines.some((l) => Number(l.quantity) <= 0)) {
+      setErr("Enter a quantity greater than 0");
       return;
     }
     setBusy(true);
@@ -104,7 +121,7 @@ export default function ReturnBox({
           customer_id: customerId,
           items: lines.map((l) => ({
             product_id: l.product_id,
-            quantity: l.quantity,
+            quantity: Number(l.quantity),
             unit_price: Number(l.unit_price) || 0,
           })),
         },
@@ -179,19 +196,21 @@ export default function ReturnBox({
                       <input
                         inputMode="decimal"
                         value={l.quantity}
-                        onChange={(e) => setQty(l.product_id, Number(e.target.value) || 0)}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => setQty(l.product_id, e.target.value)}
                         className="w-16 rounded-lg border border-slate-200 px-2 py-1.5 text-sm outline-none"
                       />
                       <label className="text-[11px] text-slate-500 shrink-0">Rate ₹</label>
                       <input
                         inputMode="decimal"
                         value={l.unit_price}
+                        onFocus={(e) => e.target.select()}
                         onChange={(e) => setPrice(l.product_id, e.target.value)}
                         className="w-20 rounded-lg border border-slate-200 px-2 py-1.5 text-sm outline-none"
                       />
                     </div>
                   </div>
-                  <button type="button" className="text-slate-400 text-xs" onClick={() => setQty(l.product_id, 0)}>
+                  <button type="button" className="text-slate-400 text-xs" onClick={() => remove(l.product_id)}>
                     Remove
                   </button>
                 </div>
