@@ -50,7 +50,7 @@ export default function SettingsPage() {
       <div className="rounded-3xl bg-white border border-slate-200 p-5 max-w-lg">
         <h2 className="font-semibold">Google Drive</h2>
         <p className="text-sm text-slate-600 mt-1">
-          Invoices go to BB Traders / invoices / customer / date. Signatures go to BB Traders / signatures / customer / date.
+          Invoices go to BB Traders / invoices / customer / date. Signatures go to BB Traders / signatures / customer / date. SKU backups go to BB Traders / SKUs / date.
         </p>
         {status?.connected ? (
           <p className="mt-3 text-emerald-800 text-sm">Connected as {status.email || "Google account"}</p>

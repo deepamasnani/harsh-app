@@ -1,4 +1,4 @@
-type ApiOptions = Omit<RequestInit, "body"> & { body?: any; skipCache?: boolean };
+type ApiOptions = Omit<RequestInit, "body"> & { body?: any; skipCache?: boolean; timeoutMs?: number };
 
 const TTL_MS: Record<string, number> = {
   "/api/auth/me": 60_000,
@@ -60,7 +60,7 @@ async function once<T>(path: string, options: ApiOptions): Promise<T> {
   }
   const method = (options.method || "GET").toUpperCase();
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 18_000);
+  const timer = setTimeout(() => ctrl.abort(), options.timeoutMs || 18_000);
   let res: Response;
   try {
     res = await fetch(path, {

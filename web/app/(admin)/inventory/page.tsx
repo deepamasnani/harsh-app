@@ -8,28 +8,31 @@ import { inr, qty } from "@/lib/utils";
 const empty = { sku: "", name: "", unit: "pcs", price: "", stock: "", category: "General" };
 
 export default function Inventory() {
-  const [rows, setRows] = useState<any[]>([]);
+  const [all, setAll] = useState<any[]>([]);
   const [q, setQ] = useState("");
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
+  const [backingUp, setBackingUp] = useState(false);
   const fileRef = useRef();
 
-  async function load(search = q) {
-    const data = await api(`/api/products?q=${encodeURIComponent(search)}`);
-    setRows(data);
+  const needle = q.trim().toLowerCase();
+  const rows = needle
+    ? all.filter((p) =>
+        [p.sku, p.name, p.category].some((s) => String(s || "").toLowerCase().includes(needle))
+      )
+    : all;
+
+  async function load() {
+    const data = await api("/api/products");
+    setAll(data);
   }
 
   useEffect(() => {
     load().catch((e) => setErr(e.message));
   }, []);
-
-  useEffect(() => {
-    const t = setTimeout(() => load(q).catch((e) => setErr(e.message)), 200);
-    return () => clearTimeout(t);
-  }, [q]);
 
   function startNew() {
     setEditing(null);
@@ -86,6 +89,7 @@ export default function Inventory() {
     const fd = new FormData();
     fd.append("file", file);
     try {
+      setErr("");
       const res = await api("/api/products/import", { method: "POST", body: fd });
       setMsg(`Imported: ${res.created} new, ${res.updated} updated, ${res.skipped} skipped.`);
       await load();
@@ -94,14 +98,38 @@ export default function Inventory() {
     }
   }
 
+  async function backup() {
+    setErr("");
+    setMsg("");
+    setBackingUp(true);
+    try {
+      const res = await api("/api/products/backup", { method: "POST", timeoutMs: 45_000 });
+      setMsg(`Backup saved · ${res.count} SKUs · ${res.path}`);
+    } catch (ex) {
+      setErr(ex.message);
+    } finally {
+      setBackingUp(false);
+    }
+  }
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Stock</h1>
+          <p className="text-sm text-stone-500 mt-1">
+            {needle ? `${rows.length} of ${all.length}` : all.length} SKUs
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={onFile} />
+          <button
+            onClick={backup}
+            disabled={backingUp}
+            className="rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm font-medium disabled:opacity-60"
+          >
+            {backingUp ? "Saving backup…" : "Create backup"}
+          </button>
           <button
             onClick={() => fileRef.current?.click()}
             className="rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm font-medium"
@@ -162,6 +190,13 @@ export default function Inventory() {
                 </td>
               </tr>
             ))}
+            {!rows.length && (
+              <tr>
+                <td colSpan={6} className="px-4 py-8 text-center text-stone-500">
+                  {needle ? "No matching SKU." : "No SKUs yet."}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -189,6 +224,11 @@ export default function Inventory() {
             </div>
           </button>
         ))}
+        {!rows.length && (
+          <p className="text-sm text-stone-500 px-1 py-6 text-center">
+            {needle ? "No matching SKU." : "No SKUs yet."}
+          </p>
+        )}
       </div>
 
       {open && (

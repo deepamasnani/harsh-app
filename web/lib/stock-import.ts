@@ -37,6 +37,7 @@ function sheetCategory(sheet: string) {
   if (s.includes("glass")) return "Glass band";
   if (s.includes("wood")) return "Woodtek";
   if (s.includes("pvc")) return "PVC band";
+  if (s === "stock" || s === "sheet1") return "General";
   return sheet.trim() || "General";
 }
 
@@ -58,6 +59,43 @@ export function skuFromName(prefix: string, name: string) {
   return `${prefix}-${slug}`.toUpperCase().slice(0, 80);
 }
 
+type Cols = { sku: number; name: number; unit: number; price: number; stock: number; category: number };
+
+function headerCols(row: (string | number | null)[] | undefined): Cols | null {
+  if (!row) return null;
+  const cells = row.map((c) => String(c ?? "").trim().toLowerCase());
+  const find = (...names: string[]) => {
+    const i = cells.findIndex((c) => names.includes(c));
+    return i;
+  };
+  const name = find("name", "item", "item name");
+  const sku = find("sku", "code", "item code");
+  const stock = find("stock", "stock count", "qty", "quantity", "boxes");
+  const looksLikeHeader = cells.some((c) =>
+    ["sku", "name", "item name", "stock", "stock count", "category", "price", "rate", "unit"].includes(c)
+  );
+  if (!looksLikeHeader || name < 0) return null;
+  if (sku < 0 && stock < 0) return null;
+  return {
+    sku,
+    name,
+    unit: find("unit"),
+    price: find("price", "rate"),
+    stock,
+    category: find("category"),
+  };
+}
+
+function put(merged: Map<string, ImportedProduct>, row: ImportedProduct, addStock: boolean) {
+  const existing = merged.get(row.sku);
+  if (!existing) {
+    merged.set(row.sku, row);
+    return;
+  }
+  if (addStock) existing.stock += row.stock;
+  else Object.assign(existing, row);
+}
+
 export function parseStockWorkbook(buf: Buffer): ImportedProduct[] {
   const wb = XLSX.read(buf, { type: "buffer" });
   const merged = new Map<string, ImportedProduct>();
@@ -72,19 +110,66 @@ export function parseStockWorkbook(buf: Buffer): ImportedProduct[] {
     const unit = sheetUnit(sheetName);
     const prefix = category.replace(/\s+/g, "").slice(0, 8).toUpperCase() || "ITEM";
 
+    let cols: Cols | null = null;
+    let start = 0;
+    for (let i = 0; i < Math.min(rows.length, 10); i++) {
+      const found = headerCols(rows[i]);
+      if (found) {
+        cols = found;
+        start = i + 1;
+        break;
+      }
+    }
+
+    if (cols) {
+      for (let i = start; i < rows.length; i++) {
+        const row = rows[i];
+        const name = cleanName(row?.[cols.name]);
+        if (!name) continue;
+        const sku =
+          cols.sku >= 0
+            ? cleanName(row?.[cols.sku]).toUpperCase().slice(0, 80)
+            : skuFromName(prefix, name);
+        if (!sku) continue;
+        put(
+          merged,
+          {
+            sku,
+            name,
+            unit: cols.unit >= 0 && cleanName(row?.[cols.unit]) ? cleanName(row?.[cols.unit]) : unit,
+            price: cols.price >= 0 ? num(row?.[cols.price]) : 0,
+            stock: cols.stock >= 0 ? num(row?.[cols.stock]) : 0,
+            category:
+              cols.category >= 0 && cleanName(row?.[cols.category])
+                ? cleanName(row?.[cols.category])
+                : category,
+          },
+          false
+        );
+      }
+      continue;
+    }
+
     for (const row of rows) {
       const name = cleanName(row?.[0]);
       if (!name || HEADER.has(name.toLowerCase())) continue;
       const stock = num(row?.[1]);
       const sku = skuFromName(prefix, name);
-      const existing = merged.get(sku);
-      if (existing) {
-        existing.stock += stock;
-        continue;
-      }
-      merged.set(sku, { sku, name, unit, price: 0, stock, category });
+      put(merged, { sku, name, unit, price: 0, stock, category }, true);
     }
   }
 
   return [...merged.values()];
+}
+
+export function buildStockWorkbook(products: ImportedProduct[]): Buffer {
+  const wb = XLSX.utils.book_new();
+  const rows = [
+    ["sku", "name", "unit", "price", "stock", "category"],
+    ...products.map((p) => [p.sku, p.name, p.unit, p.price, p.stock, p.category]),
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"] = [{ wch: 18 }, { wch: 42 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 16 }];
+  XLSX.utils.book_append_sheet(wb, ws, "Stock");
+  return Buffer.from(XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
 }

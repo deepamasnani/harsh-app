@@ -11,7 +11,7 @@ import { inr, qty } from "@/lib/utils";
 export default function Billing() {
   const nav = useRouter();
   const searchRef = useRef(null);
-  const [products, setProducts] = useState([]);
+  const [catalog, setCatalog] = useState([]);
   const [q, setQ] = useState("");
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -21,7 +21,7 @@ export default function Billing() {
   const [picked, setPicked] = useState(null);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
-  const [searching, setSearching] = useState(false);
+  const [loadingSkus, setLoadingSkus] = useState(true);
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
@@ -78,20 +78,18 @@ export default function Billing() {
   }
 
   useEffect(() => {
-    const s = q.trim();
-    if (s.length < 1) {
-      setProducts([]);
-      return;
-    }
-    const t = setTimeout(() => {
-      setSearching(true);
-      api(`/api/products?q=${encodeURIComponent(s)}&limit=25`)
-        .then(setProducts)
-        .catch((e) => setErr(e.message))
-        .finally(() => setSearching(false));
-    }, 160);
-    return () => clearTimeout(t);
-  }, [q]);
+    api("/api/products")
+      .then(setCatalog)
+      .catch((e) => setErr(e.message))
+      .finally(() => setLoadingSkus(false));
+  }, []);
+
+  const needle = q.trim().toLowerCase();
+  const products = needle
+    ? catalog.filter((p) =>
+        [p.sku, p.name, p.category].some((s) => String(s || "").toLowerCase().includes(needle))
+      )
+    : catalog;
 
   const total = cart.reduce((s, i) => s + Number(i.price || 0) * i.quantity, 0);
 
@@ -102,7 +100,6 @@ export default function Billing() {
       return [...prev, { product_id: p.id, sku: p.sku, name: p.name, unit: p.unit, price: p.price ?? 0, quantity: 1, stock: p.stock }];
     });
     setQ("");
-    setProducts([]);
   }
 
   function setQty(id, quantity) {
@@ -243,7 +240,12 @@ export default function Billing() {
       />
 
       <div className="mt-3 space-y-2">
-        {searching && <p className="text-sm text-slate-500 px-1">Searching…</p>}
+        {loadingSkus && <p className="text-sm text-slate-500 px-1">Loading SKUs…</p>}
+        {!loadingSkus && (
+          <p className="text-xs text-slate-500 px-1">
+            {needle ? `${products.length} of ${catalog.length}` : catalog.length} SKUs
+          </p>
+        )}
         {products.map((p) => (
           <button
             key={p.id}
@@ -260,8 +262,8 @@ export default function Billing() {
             <p className="font-semibold text-brass-700 shrink-0">{inr(p.price)}</p>
           </button>
         ))}
-        {q.trim() && !searching && !products.length && <p className="text-sm text-slate-500 px-1">No matching SKU.</p>}
-        {!q.trim() && !cart.length && <p className="text-sm text-slate-500 px-1 pt-2">Search a tape code, then tap to add.</p>}
+        {needle && !loadingSkus && !products.length && <p className="text-sm text-slate-500 px-1">No matching SKU.</p>}
+        {!needle && !loadingSkus && !catalog.length && <p className="text-sm text-slate-500 px-1 pt-2">No SKUs in stock yet.</p>}
       </div>
 
       <aside className="cart-dock fixed inset-x-0 z-20 px-3">

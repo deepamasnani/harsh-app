@@ -210,6 +210,20 @@ async function putFile(drive: Drive, parentId: string, name: string, data: Buffe
   return created.data.id!;
 }
 
+export async function uploadSkuBackup(data: Buffer, fileName: string, day: string) {
+  const { drive, row } = await loadClient();
+  const skusFolderId = await childFolder(drive, row.rootFolderId, "SKUs");
+  const dayFolderId = await childFolder(drive, skusFolderId, day);
+  const fileId = await putFile(
+    drive,
+    dayFolderId,
+    fileName,
+    data,
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+  return { fileId, path: `${shopRootName()}/SKUs/${day}/${fileName}` };
+}
+
 export async function uploadInvoiceDump(opts: {
   customerName: string;
   createdAt: Date;

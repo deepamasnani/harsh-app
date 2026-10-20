@@ -31,8 +31,8 @@ export async function GET(req: NextRequest) {
   if (error) return error;
   const q = req.nextUrl.searchParams.get("q")?.trim() || "";
   const includeInactive = req.nextUrl.searchParams.get("include_inactive") === "true";
-  const limitRaw = Number(req.nextUrl.searchParams.get("limit"));
-  const take = Math.min(Number.isFinite(limitRaw) && limitRaw > 0 ? limitRaw : q ? 40 : 80, 250);
+  const limitParam = req.nextUrl.searchParams.get("limit");
+  const take = limitParam ? Math.min(Math.max(Number(limitParam) || 0, 1), 2000) : undefined;
   const rows = await prisma.product.findMany({
     where: {
       ...(includeInactive ? {} : { isActive: true }),
@@ -46,8 +46,8 @@ export async function GET(req: NextRequest) {
           }
         : {}),
     },
-    orderBy: { name: "asc" },
-    take,
+    orderBy: [{ category: "asc" }, { name: "asc" }],
+    ...(take ? { take } : {}),
   });
   return NextResponse.json(rows.map(out));
 }
