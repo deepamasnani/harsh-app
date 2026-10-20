@@ -35,7 +35,7 @@ export default function StaffFolder() {
         All folders
       </Link>
       <h1 className="font-display text-3xl mt-3 leading-tight">{head.customer_shop || head.customer_name}</h1>
-      <p className="text-stone-500 text-sm mt-1">{head.customer_phone || "No phone"} · today</p>
+      <p className="text-stone-500 text-sm mt-1">{head.customer_phone || "No phone"}</p>
 
       {pending.length > 0 && (
         <>

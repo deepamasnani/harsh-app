@@ -27,8 +27,16 @@ export async function GET(req: NextRequest) {
   if (user!.role === "staff") {
     const { start, end } = todayBoundsUtc();
     if (status === "cancelled") return NextResponse.json([]);
-    where.createdAt = { gte: start, lt: end };
-    where.status = status ? status : { not: "cancelled" };
+    where.AND = [
+      { status: status ? status : { not: "cancelled" } },
+      {
+        OR: [
+          { status: "pending" },
+          { createdAt: { gte: start, lt: end } },
+          { deliveredAt: { gte: start, lt: end } },
+        ],
+      },
+    ];
   }
   const rows = await prisma.invoice.findMany({
     where,
@@ -37,7 +45,7 @@ export async function GET(req: NextRequest) {
       payments: { orderBy: { createdAt: "asc" } },
     },
     orderBy: { createdAt: "desc" },
-    take: status === "credit" ? 200 : 80,
+    take: user!.role === "staff" || status === "credit" ? 200 : 80,
   });
   return NextResponse.json(rows.map((inv) => invoiceOut(inv as any, false)));
 }

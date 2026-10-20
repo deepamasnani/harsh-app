@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireUser, jsonError } from "@/lib/auth";
 import { invoiceInclude, invoiceOut } from "@/lib/invoices";
-import { isToday, money } from "@/lib/money";
+import { money } from "@/lib/money";
 import { archiveInvoice, pngFromDataUrl } from "@/lib/archive";
 
 export const maxDuration = 60;
@@ -14,7 +14,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const inv = await prisma.invoice.findUnique({ where: { id: Number(id) }, include: invoiceInclude });
   if (!inv) return jsonError("Invoice not found", 404);
   if (inv.status !== "pending") return jsonError("This receipt is already closed");
-  if (user!.role === "staff" && !isToday(inv.createdAt)) return jsonError("Invoice not found", 404);
   const body = await req.json();
   if (!["paid", "credit"].includes(body.payment)) return jsonError("payment must be paid or credit");
   const cash = money(body.amount_paid);

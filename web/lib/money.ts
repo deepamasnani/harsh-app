@@ -83,3 +83,9 @@ export function isToday(dt: Date | null | undefined) {
   const t = dt.getTime();
   return t >= start.getTime() && t < end.getTime();
 }
+
+export function staffCanSeeInvoice(inv: { status: string; createdAt: Date; deliveredAt?: Date | null }) {
+  if (inv.status === "cancelled") return false;
+  if (inv.status === "pending") return true;
+  return isToday(inv.createdAt) || isToday(inv.deliveredAt);
+}
